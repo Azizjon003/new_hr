@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+logs/
+files/
+!files/.gitkeep
+.DS_Store
+.idea/
+.vscode/
+prisma/migrations/dev.db*
+coverage/
+.cache/

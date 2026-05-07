@@ -1,0 +1,250 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Lang {
+  UZ
+  RU
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  REMOTE
+  HYBRID
+}
+
+enum ExperienceLevel {
+  NO_EXPERIENCE
+  JUNIOR
+  MIDDLE
+  SENIOR
+  LEAD
+}
+
+enum QuestionType {
+  TEXT
+  LONG_TEXT
+  NUMBER
+  DATE
+  PHONE
+  EMAIL
+  SINGLE_CHOICE
+  MULTI_CHOICE
+  FILE
+  PHOTO
+  BOOLEAN
+  LOCATION
+}
+
+enum AppStatus {
+  DRAFT
+  PENDING
+  VIEWED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+model User {
+  id          String   @id @default(cuid())
+  telegramId  BigInt   @unique
+  username    String?
+  tgFirstName String?
+  tgLastName  String?
+  lang        Lang     @default(UZ)
+  isBlocked   Boolean  @default(false)
+  isAdmin     Boolean  @default(false)
+
+  profileFullName  String?
+  profilePhone     String?
+  profileBirthDate DateTime?
+  profileEmail     String?
+  profileCity      String?
+
+  consentGivenAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  applications  Application[]
+  adminLogs     AdminLog[]
+  statusChanges ApplicationStatusHistory[]
+}
+
+model Company {
+  id            String   @id @default(cuid())
+  nameUz        String
+  nameRu        String
+  descriptionUz String?
+  descriptionRu String?
+  logoFilePath  String?
+  channelId     String?
+  isActive      Boolean  @default(true)
+  isDeleted     Boolean  @default(false)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  departments Department[]
+
+  @@index([isActive, isDeleted])
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  nameUz    String
+  nameRu    String
+  isActive  Boolean  @default(true)
+  isDeleted Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  positions Position[]
+
+  @@index([companyId, isActive, isDeleted])
+}
+
+model Position {
+  id           String     @id @default(cuid())
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  titleUz       String
+  titleRu       String
+  descriptionUz String?
+  descriptionRu String?
+
+  salaryFrom       Int?
+  salaryTo         Int?
+  currency         String  @default("UZS")
+  salaryNegotiable Boolean @default(false)
+
+  location        String?
+  employmentType  EmploymentType  @default(FULL_TIME)
+  experienceLevel ExperienceLevel @default(NO_EXPERIENCE)
+
+  requirePhoto Boolean @default(false)
+  requireCv    Boolean @default(false)
+
+  isActive   Boolean @default(true)
+  isFeatured Boolean @default(false)
+  isDeleted  Boolean @default(false)
+  order      Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  questions    Question[]
+  applications Application[]
+
+  @@index([departmentId, isActive, isDeleted])
+}
+
+model Question {
+  id            String       @id @default(cuid())
+  positionId    String
+  position      Position     @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  order         Int
+  textUz        String
+  textRu        String
+  type          QuestionType
+  required      Boolean      @default(true)
+  options       Json?
+  validation    Json?
+  placeholderUz String?
+  placeholderRu String?
+  createdAt     DateTime     @default(now())
+
+  answers Answer[]
+
+  @@index([positionId, order])
+}
+
+model Application {
+  id         String    @id @default(cuid())
+  refCode    String    @unique
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  positionId String
+  position   Position  @relation(fields: [positionId], references: [id])
+  status     AppStatus @default(DRAFT)
+
+  photoFilePath String?
+  cvFilePath    String?
+  pdfFilePath   String?
+
+  channelMessageId String?
+  channelChatId    String?
+
+  rejectReason String?
+
+  createdAt   DateTime  @default(now())
+  submittedAt DateTime?
+  updatedAt   DateTime  @updatedAt
+
+  answers       Answer[]
+  statusHistory ApplicationStatusHistory[]
+
+  @@index([userId])
+  @@index([positionId, status])
+  @@index([status, createdAt])
+}
+
+model Answer {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question    @relation(fields: [questionId], references: [id])
+  valueText     String?
+  valueNumber   Float?
+  valueDate     DateTime?
+  valueJson     Json?
+  filePath      String?
+  createdAt     DateTime    @default(now())
+
+  @@unique([applicationId, questionId])
+}
+
+model ApplicationStatusHistory {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  fromStatus    AppStatus?
+  toStatus      AppStatus
+  changedById   String?
+  changedBy     User?       @relation(fields: [changedById], references: [id])
+  reason        String?
+  createdAt     DateTime    @default(now())
+
+  @@index([applicationId])
+}
+
+model AdminLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  admin     User     @relation(fields: [adminId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@index([adminId, createdAt])
+}
+
+model Counter {
+  key   String @id
+  value Int    @default(0)
+}
