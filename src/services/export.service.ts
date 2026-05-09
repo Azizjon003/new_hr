@@ -53,11 +53,11 @@ export async function exportApplicationsToExcel(filter: ExportFilter = {}): Prom
   };
   if (filter.status) where.status = filter.status;
   if (filter.positionId) where.positionId = filter.positionId;
-  if (filter.departmentId) {
-    where.position = { departmentId: filter.departmentId };
-  }
-  if (filter.companyId) {
-    where.position = { ...(where.position ?? {}), department: { companyId: filter.companyId } };
+  if (filter.companyId || filter.departmentId) {
+    const positionWhere: Prisma.PositionWhereInput = {};
+    if (filter.departmentId) positionWhere.departmentId = filter.departmentId;
+    if (filter.companyId) positionWhere.department = { companyId: filter.companyId };
+    where.position = positionWhere;
   }
   if (filter.fromDate || filter.toDate) {
     where.createdAt = {};

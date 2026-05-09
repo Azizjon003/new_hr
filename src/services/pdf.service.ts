@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import PdfPrinter from 'pdfmake';
-import type { TDocumentDefinitions, Content } from 'pdfmake/interfaces.js';
+import type { TDocumentDefinitions, Content } from 'pdfmake/interfaces';
 import { Lang, Prisma, QuestionType } from '@prisma/client';
 import { FILES } from '../utils/files.js';
 import { logger } from '../utils/logger.js';

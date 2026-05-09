@@ -97,7 +97,7 @@ async function createQuestionConvo(conversation: Convo, ctx: MyContext): Promise
     while (!options) {
       const raw = (await conversation.waitFor('message:text')).message.text.trim();
       const lines = raw.split('\n').map((l) => l.trim()).filter(Boolean);
-      const parsed: typeof options = [];
+      const parsed: Array<{ value: string; labelUz: string; labelRu: string }> = [];
       let hasError = false;
       for (const line of lines) {
         const parts = line.split('|').map((p) => p.trim());
