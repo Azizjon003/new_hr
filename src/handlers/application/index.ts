@@ -4,7 +4,6 @@ import { MyContext } from '../../types/context.js';
 import { questionnaireConversation } from './flow.js';
 import { selectComposer, showCompanyScreen } from './select.js';
 import { findUserDraft } from '../../services/application.service.js';
-import { isProfileComplete } from '../../services/user.service.js';
 import { mainMenuKeyboard } from '../../keyboards/main-menu.js';
 import { LABELS } from '../../keyboards/labels.js';
 
@@ -19,15 +18,6 @@ applyComposer.hears([...LABELS.apply], async (ctx) => {
   if (!ctx.dbUser.consentGivenAt) {
     const { showConsent } = await import('../start.js');
     await showConsent(ctx);
-    return;
-  }
-
-  if (!isProfileComplete(ctx.dbUser)) {
-    await ctx.reply(ctx.t('profile-empty'), {
-      reply_markup: {
-        inline_keyboard: [[{ text: ctx.t('profile-fill'), callback_data: 'profile:edit' }]],
-      },
-    });
     return;
   }
 

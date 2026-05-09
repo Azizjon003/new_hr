@@ -451,17 +451,22 @@ async function confirmAndSubmit(
 ): Promise<boolean> {
   const lang = ctx.dbUser!.lang;
   const u = ctx.dbUser!;
-  const lines = [
-    ctx.t('apply-confirm-title'),
-    '',
-    `💼 <b>${getPositionTitle(pos, lang)}</b>`,
-    '',
-    `👤 ${u.profileFullName ?? '-'}`,
-    `📞 ${u.profilePhone ?? '-'}`,
-    u.profileBirthDate ? `🎂 ${formatDate(u.profileBirthDate)}` : '',
-    u.profileEmail ? `📧 ${u.profileEmail}` : '',
-    u.profileCity ? `🏙 ${u.profileCity}` : '',
-  ].filter(Boolean);
+  const hasProfile = Boolean(u.profileFullName || u.profilePhone || u.profileEmail);
+
+  const lines = [ctx.t('apply-confirm-title'), '', `💼 <b>${getPositionTitle(pos, lang)}</b>`, ''];
+
+  if (hasProfile) {
+    if (u.profileFullName) lines.push(`👤 ${u.profileFullName}`);
+    if (u.profilePhone) lines.push(`📞 ${u.profilePhone}`);
+    if (u.profileBirthDate) lines.push(`🎂 ${formatDate(u.profileBirthDate)}`);
+    if (u.profileEmail) lines.push(`📧 ${u.profileEmail}`);
+    if (u.profileCity) lines.push(`🏙 ${u.profileCity}`);
+  } else {
+    // Profil bo'sh — Telegram identifikatorini ko'rsatamiz
+    const tgName = [u.tgFirstName, u.tgLastName].filter(Boolean).join(' ');
+    if (tgName) lines.push(`👤 ${tgName}`);
+    if (u.username) lines.push(`💬 @${u.username}`);
+  }
 
   const kb = new InlineKeyboard()
     .text(ctx.t('apply-confirm-submit'), 'apply:submit')

@@ -32,18 +32,21 @@ export async function postApplicationToChannel(
   }
 
   const username = app.user.username ? `@${app.user.username}` : `id${app.user.telegramId}`;
-  const caption = [
+  const tgFallbackName = [app.user.tgFirstName, app.user.tgLastName].filter(Boolean).join(' ');
+  const displayName = app.user.profileFullName ?? tgFallbackName ?? '-';
+
+  const lines = [
     `<b>📨 ${lang === 'RU' ? 'Новая заявка' : 'Yangi ariza'}</b>`,
     ``,
     `🆔 <code>${app.refCode}</code>`,
     `🏢 ${getCompanyName(company, lang)} · ${getDepartmentName(app.position.department, lang)}`,
     `💼 <b>${getPositionTitle(app.position, lang)}</b>`,
     ``,
-    `👤 ${app.user.profileFullName ?? '-'}`,
-    `📞 ${app.user.profilePhone ?? '-'}`,
-    `💬 ${username}`,
-    `📅 ${formatDate(app.submittedAt ?? app.createdAt)}`,
-  ].join('\n');
+    `👤 ${displayName || '-'}`,
+  ];
+  if (app.user.profilePhone) lines.push(`📞 ${app.user.profilePhone}`);
+  lines.push(`💬 ${username}`, `📅 ${formatDate(app.submittedAt ?? app.createdAt)}`);
+  const caption = lines.join('\n');
 
   try {
     const msg = await api.sendDocument(company.channelId, new InputFile(pdfPath), {

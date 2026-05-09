@@ -176,11 +176,16 @@ function buildAppContent(app: AppFull, options: { pageBreakBefore?: boolean } = 
   const company = app.position.department.company;
   const refRow = formatDate(app.submittedAt ?? app.createdAt);
 
+  const tgFallbackName = [app.user.tgFirstName, app.user.tgLastName].filter(Boolean).join(' ');
+  const displayFullName =
+    app.user.profileFullName ??
+    (tgFallbackName || app.user.username || `id${app.user.telegramId.toString()}`);
+
   const profileTable: Content = {
     table: {
       widths: [120, '*'],
       body: [
-        [{ text: t.fullName, style: 'kvKey' }, app.user.profileFullName ?? t.notSet],
+        [{ text: t.fullName, style: 'kvKey' }, displayFullName],
         [{ text: t.phone, style: 'kvKey' }, app.user.profilePhone ?? t.notSet],
         [
           { text: t.birthDate, style: 'kvKey' },
