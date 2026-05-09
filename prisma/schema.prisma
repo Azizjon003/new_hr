@@ -1,5 +1,8 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // native — lokal dev (Windows/Mac/Linux)
+  // debian-openssl-3.0.x — Docker (node:20-slim, Debian Bookworm)
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
