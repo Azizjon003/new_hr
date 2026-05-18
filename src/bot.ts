@@ -45,8 +45,7 @@ export function createBot(): Bot<MyContext> {
   bot.callbackQuery('noop', (ctx) => ctx.answerCallbackQuery());
 
   bot.catch((err) => {
-    const inner = err.error as { message?: string } | undefined;
-    const errMsg = String(inner?.message ?? err.message ?? '');
+    const errMsg = err.message ?? String(err);
     const isDbAuthError =
       errMsg.includes('Authentication failed against database') ||
       errMsg.includes('P1000') ||
