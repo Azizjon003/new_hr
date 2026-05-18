@@ -11,6 +11,18 @@ async function main(): Promise<void> {
   ensureDirs();
   logger.info({ env: env.NODE_ENV, mode: env.BOT_MODE }, '🚀 Starting HR bot');
 
+  // DB ulanishni darrov tekshirish — auth muammosi bo'lsa fail-fast
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    logger.info('✅ Database connection OK');
+  } catch (err) {
+    logger.fatal(
+      { err },
+      '❌ Database connection failed at startup. Check DATABASE_URL credentials.',
+    );
+    process.exit(1);
+  }
+
   // ENV.ADMIN_IDS dagi adminlarni DB ga seed qilish (idempotent)
   await seedAdminsFromEnv().catch((err) => logger.error({ err }, 'Admin seeding failed'));
 

@@ -45,6 +45,22 @@ export function createBot(): Bot<MyContext> {
   bot.callbackQuery('noop', (ctx) => ctx.answerCallbackQuery());
 
   bot.catch((err) => {
+    const errMsg = String(err?.error?.message ?? err?.message ?? '');
+    const isDbAuthError =
+      errMsg.includes('Authentication failed against database') ||
+      errMsg.includes('P1000') ||
+      errMsg.includes("Can't reach database server");
+
+    if (isDbAuthError) {
+      logger.fatal(
+        { err },
+        '❌ Critical DB error — exiting so container can restart and recover',
+      );
+      // Container restart bilan yangi connection olishga harakat qilamiz
+      setTimeout(() => process.exit(1), 1000);
+      return;
+    }
+
     logger.error({ err }, 'Bot error');
   });
 
