@@ -41,7 +41,7 @@ export interface CompanySeed {
   departments: DepartmentSeed[];
 }
 
-// Qisqa yordamchi — har bir lavozimga 'common' shabloni qo'shiladi
+// Qisqa yordamchi — savollarsiz lavozim (adminlar savollarni keyin o'zlari qo'shadi)
 function pos(titleUz: string, titleRu: string, order: number): PositionSeed {
   return {
     titleUz,
@@ -51,7 +51,7 @@ function pos(titleUz: string, titleRu: string, order: number): PositionSeed {
     employmentType: EmploymentType.FULL_TIME,
     experienceLevel: ExperienceLevel.NO_EXPERIENCE,
     order,
-    useTemplate: 'common',
+    // useTemplate yo'q — savollar qo'shilmaydi
   };
 }
 
