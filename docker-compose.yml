@@ -46,9 +46,8 @@ services:
     env_file:
       - .env
     environment:
-      # Docker tarmog'idagi ichki manzillar (`.env` dagi DATABASE_URL/REDIS_URL ni override qiladi)
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-1234}@postgres:5432/${POSTGRES_DB:-hr}?schema=public
-      REDIS_URL: redis://redis:6379
+      # DATABASE_URL va REDIS_URL endi to'g'ridan-to'g'ri .env dan o'qiladi
+      # (.env da docker hostlari bo'lishi shart: postgres:5432, redis:6379)
       NODE_ENV: production
     volumes:
       - ./files:/app/files
@@ -74,7 +73,6 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-1234}@postgres:5432/${POSTGRES_DB:-hr}?schema=public
       NODE_ENV: production
     command: npx tsx prisma/seed.ts
     depends_on:
