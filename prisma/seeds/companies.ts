@@ -41,188 +41,179 @@ export interface CompanySeed {
   departments: DepartmentSeed[];
 }
 
+// Qisqa yordamchi — har bir lavozimga 'common' shabloni qo'shiladi
+function pos(titleUz: string, titleRu: string, order: number): PositionSeed {
+  return {
+    titleUz,
+    titleRu,
+    salaryNegotiable: true,
+    currency: 'UZS',
+    employmentType: EmploymentType.FULL_TIME,
+    experienceLevel: ExperienceLevel.NO_EXPERIENCE,
+    order,
+    useTemplate: 'common',
+  };
+}
+
+// Restoran bo'limlari — Arzum va Gnomik uchun bir xil
+function restaurantDepartments(): DepartmentSeed[] {
+  return [
+    {
+      nameUz: "Rahbariyat bo'limi",
+      nameRu: 'Руководство',
+      order: 1,
+      positions: [
+        pos('Direktor', 'Директор', 1),
+        pos('Boshqaruvchi (Manager)', 'Управляющий (Менеджер)', 2),
+        pos('Administrator', 'Администратор', 3),
+        pos('HR menejer', 'HR менеджер', 4),
+        pos('Moliyachi / Buxgalter', 'Финансист / Бухгалтер', 5),
+      ],
+    },
+    {
+      nameUz: "Oshxona bo'limi",
+      nameRu: 'Кухня',
+      order: 2,
+      positions: [
+        pos('Bosh oshpaz (Chef)', 'Шеф-повар', 1),
+        pos('Oshpaz', 'Повар', 2),
+        pos('Qandolatchi', 'Кондитер', 3),
+        pos('Pitsa ustasi', 'Пиццамейкер', 4),
+        pos('Fastfood ustasi', 'Фастфуд повар', 5),
+        pos('Yordamchi oshpaz', 'Помощник повара', 6),
+        pos('Idish-tovoq yuvuvchi', 'Посудомойщик', 7),
+      ],
+    },
+    {
+      nameUz: "Xizmat ko'rsatish bo'limi",
+      nameRu: 'Обслуживание',
+      order: 3,
+      positions: [
+        pos('Ofitsiant(ka)', 'Официант(ка)', 1),
+        pos('Barista', 'Бариста', 2),
+        pos('Barmen', 'Бармен', 3),
+        pos('Kassir', 'Кассир', 4),
+        pos('Hostes', 'Хостес', 5),
+      ],
+    },
+    {
+      nameUz: "Texnik va yordamchi xodimlar bo'limi",
+      nameRu: 'Технический и вспомогательный персонал',
+      order: 4,
+      positions: [
+        pos('Tozalovchi', 'Уборщик', 1),
+        pos('Omborchi', 'Кладовщик', 2),
+        pos('Yetkazib beruvchi (Kuryer)', 'Курьер', 3),
+        pos('Xavfsizlik xodimi', 'Сотрудник безопасности', 4),
+        pos('Texnik xodim / Elektrik', 'Технический работник / Электрик', 5),
+      ],
+    },
+  ];
+}
+
 export const companiesSeed: CompanySeed[] = [
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 1) IT KOMPANIYA
+  // 1) ARZUM RESTORAN
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   {
-    nameUz: 'TechSolutions',
-    nameRu: 'TechSolutions',
-    descriptionUz:
-      "Toshkentda joylashgan IT-kompaniya. Web va mobil ilovalarni ishlab chiqamiz. Zamonaviy ofis, do'stona jamoa.",
-    descriptionRu:
-      'IT-компания в Ташкенте. Разрабатываем веб и мобильные приложения. Современный офис, дружная команда.',
+    nameUz: 'Arzum restoran',
+    nameRu: 'Ресторан Arzum',
+    descriptionUz: 'Restoran. Oshxona, xizmat ko‘rsatish va boshqaruv bo‘yicha vakansiyalar.',
+    descriptionRu: 'Ресторан. Вакансии по кухне, обслуживанию и управлению.',
     order: 1,
-    departments: [
-      {
-        nameUz: 'Dasturlash',
-        nameRu: 'Разработка',
-        order: 1,
-        positions: [
-          {
-            titleUz: 'Frontend dasturchi (React)',
-            titleRu: 'Frontend разработчик (React)',
-            descriptionUz:
-              "React, TypeScript, Tailwind bilan ishlovchi frontend dasturchi qidiramiz. Ofis: Toshkent, Mirzo Ulug'bek tumani.",
-            descriptionRu:
-              'Ищем Frontend разработчика со знанием React, TypeScript, Tailwind. Офис: Ташкент, Мирзо-Улугбек.',
-            salaryFrom: 8000000,
-            salaryTo: 18000000,
-            currency: 'UZS',
-            location: 'Toshkent',
-            employmentType: EmploymentType.FULL_TIME,
-            experienceLevel: ExperienceLevel.MIDDLE,
-            requireCv: true,
-            isFeatured: true,
-            useTemplate: ['common', 'developer'],
-          },
-          {
-            titleUz: 'Backend dasturchi (Node.js)',
-            titleRu: 'Backend разработчик (Node.js)',
-            descriptionUz: 'Node.js, NestJS, PostgreSQL. Microservices arxitekturasi.',
-            descriptionRu: 'Node.js, NestJS, PostgreSQL. Микросервисная архитектура.',
-            salaryFrom: 10000000,
-            salaryTo: 22000000,
-            location: 'Toshkent',
-            experienceLevel: ExperienceLevel.MIDDLE,
-            requireCv: true,
-            useTemplate: ['common', 'developer'],
-          },
-          {
-            titleUz: 'QA Engineer (Junior)',
-            titleRu: 'QA Engineer (Junior)',
-            descriptionUz: "Test yozish va manual testlash bo'yicha junior pozitsiya.",
-            descriptionRu: 'Junior позиция в тестировании ПО (manual + автотесты).',
-            salaryFrom: 4000000,
-            salaryTo: 7000000,
-            location: 'Toshkent',
-            experienceLevel: ExperienceLevel.JUNIOR,
-            useTemplate: ['common'],
-          },
-        ],
-      },
-      {
-        nameUz: 'Dizayn',
-        nameRu: 'Дизайн',
-        order: 2,
-        positions: [
-          {
-            titleUz: 'UI/UX dizayner',
-            titleRu: 'UI/UX дизайнер',
-            descriptionUz:
-              'Mobil va web ilovalar uchun UI/UX dizaynlar yaratish. Figma, prototyping.',
-            descriptionRu: 'Дизайн UI/UX для мобильных и веб приложений. Figma, прототипирование.',
-            salaryFrom: 7000000,
-            salaryTo: 15000000,
-            location: 'Toshkent',
-            employmentType: EmploymentType.HYBRID,
-            experienceLevel: ExperienceLevel.MIDDLE,
-            requirePhoto: true,
-            useTemplate: ['common', 'designer'],
-          },
-        ],
-      },
-    ],
+    departments: restaurantDepartments(),
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 2) MARKETING AGENTLIGI
+  // 2) GNOMIK RESTORAN (Arzum kabi)
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   {
-    nameUz: 'BrandUp Agency',
-    nameRu: 'BrandUp Agency',
-    descriptionUz: "O'zbekistondagi yetakchi marketing agentligi. SMM, brending, reklama.",
-    descriptionRu: 'Ведущее маркетинговое агентство Узбекистана. SMM, брендинг, реклама.',
+    nameUz: 'Gnomik restoran',
+    nameRu: 'Ресторан Gnomik',
+    descriptionUz: 'Restoran. Oshxona, xizmat ko‘rsatish va boshqaruv bo‘yicha vakansiyalar.',
+    descriptionRu: 'Ресторан. Вакансии по кухне, обслуживанию и управлению.',
     order: 2,
-    departments: [
-      {
-        nameUz: 'Marketing',
-        nameRu: 'Маркетинг',
-        positions: [
-          {
-            titleUz: 'SMM mutaxassisi',
-            titleRu: 'SMM специалист',
-            descriptionUz: 'Instagram, Telegram kontentini yaratish va boshqarish.',
-            descriptionRu: 'Создание и ведение контента в Instagram, Telegram.',
-            salaryFrom: 5000000,
-            salaryTo: 10000000,
-            location: 'Toshkent',
-            experienceLevel: ExperienceLevel.JUNIOR,
-            requirePhoto: true,
-            useTemplate: ['common', 'marketing'],
-          },
-          {
-            titleUz: 'Marketing menejer',
-            titleRu: 'Маркетинг менеджер',
-            descriptionUz: 'Marketing strategiyalari ishlab chiqish, jamoani boshqarish.',
-            descriptionRu: 'Разработка маркетинговых стратегий, управление командой.',
-            salaryFrom: 12000000,
-            salaryTo: 25000000,
-            location: 'Toshkent',
-            experienceLevel: ExperienceLevel.SENIOR,
-            requireCv: true,
-            useTemplate: ['common', 'marketing'],
-          },
-        ],
-      },
-      {
-        nameUz: 'Sotuv',
-        nameRu: 'Продажи',
-        positions: [
-          {
-            titleUz: 'Sotuv menejeri',
-            titleRu: 'Менеджер по продажам',
-            descriptionUz: "Mijozlar bilan ishlash, B2B sotuvlar. Bonus tizimi: maosh + %.",
-            descriptionRu: 'Работа с клиентами, B2B продажи. Бонусы: оклад + %.',
-            salaryFrom: 5000000,
-            salaryNegotiable: true,
-            location: 'Toshkent',
-            experienceLevel: ExperienceLevel.JUNIOR,
-            useTemplate: ['common', 'sales'],
-          },
-        ],
-      },
-    ],
+    departments: restaurantDepartments(),
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 3) LOGISTIKA
+  // 3) GRAND PRINT
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   {
-    nameUz: 'FastDelivery',
-    nameRu: 'FastDelivery',
-    descriptionUz: "O'zbekiston bo'ylab tez yetkazib berish xizmati.",
-    descriptionRu: 'Служба быстрой доставки по всему Узбекистану.',
+    nameUz: 'Grand print',
+    nameRu: 'Grand print',
+    descriptionUz: 'Bosmaxona / ishlab chiqarish korxonasi. Ishlab chiqarish, sifat nazorati va savdo vakansiyalari.',
+    descriptionRu: 'Типография / производство. Вакансии по производству, контролю качества и продажам.',
     order: 3,
     departments: [
       {
-        nameUz: 'Yetkazib berish',
-        nameRu: 'Доставка',
+        nameUz: "Rahbariyat bo'limi",
+        nameRu: 'Руководство',
+        order: 1,
         positions: [
-          {
-            titleUz: 'Kuryer (mototsikl)',
-            titleRu: 'Курьер (мотоцикл)',
-            descriptionUz: "Toshkent bo'ylab buyurtmalarni yetkazish. Mototsikl va yoqilg'i kompaniyadan.",
-            descriptionRu: 'Доставка заказов по Ташкенту. Мотоцикл и топливо от компании.',
-            salaryFrom: 4000000,
-            salaryTo: 8000000,
-            location: 'Toshkent',
-            employmentType: EmploymentType.FULL_TIME,
-            experienceLevel: ExperienceLevel.NO_EXPERIENCE,
-            requirePhoto: true,
-            useTemplate: ['common', 'driver'],
-          },
-          {
-            titleUz: 'Yuk haydovchisi',
-            titleRu: 'Водитель грузовика',
-            descriptionUz: "Mintaqalararo yuk tashish (C/CE toifa).",
-            descriptionRu: 'Межрегиональные грузоперевозки (C/CE категории).',
-            salaryFrom: 8000000,
-            salaryTo: 14000000,
-            location: "O'zbekiston bo'ylab",
-            experienceLevel: ExperienceLevel.MIDDLE,
-            useTemplate: ['common', 'driver'],
-          },
+          pos('Korxona direktori', 'Директор предприятия', 1),
+          pos('Ishlab chiqarish menejeri', 'Менеджер производства', 2),
+          pos('HR menejer', 'HR менеджер', 3),
+          pos('Buxgalter', 'Бухгалтер', 4),
+          pos('Kotiba', 'Секретарь', 5),
+          pos('IT mutaxassisi', 'IT специалист', 6),
+        ],
+      },
+      {
+        nameUz: "Ishlab chiqarish bo'limi",
+        nameRu: 'Производство',
+        order: 2,
+        positions: [
+          pos('Operator', 'Оператор', 1),
+          pos('Stanok operatori', 'Оператор станка', 2),
+          pos('Kesish ustasi', 'Резчик', 3),
+          pos('Bosma operatori', 'Печатник (оператор печати)', 4),
+          pos('Laminatsiya operatori', 'Оператор ламинации', 5),
+          pos('Yelimlash ustasi', 'Клейщик', 6),
+          pos('Qadoqlovchi', 'Упаковщик', 7),
+          pos('Texnolog', 'Технолог', 8),
+        ],
+      },
+      {
+        nameUz: "Sifat nazorati bo'limi",
+        nameRu: 'Контроль качества',
+        order: 3,
+        positions: [
+          pos('Tayyor mahsulot nazoratchisi', 'Контролёр готовой продукции', 1),
+          pos('Sifat nazorati', 'Контроль качества', 2),
+          pos('Sifat nazoratchisi (QC)', 'Контролёр качества (QC)', 3),
+        ],
+      },
+      {
+        nameUz: 'Ombor va logistika',
+        nameRu: 'Склад и логистика',
+        order: 4,
+        positions: [
+          pos('Omborchi', 'Кладовщик', 1),
+          pos('Yuklovchi', 'Грузчик', 2),
+          pos('Haydovchi', 'Водитель', 3),
+          pos('Agent', 'Агент', 4),
+        ],
+      },
+      {
+        nameUz: "Texnik xizmat bo'limi",
+        nameRu: 'Техническое обслуживание',
+        order: 5,
+        positions: [
+          pos('Mexanik', 'Механик', 1),
+          pos('Elektrik', 'Электрик', 2),
+          pos('Muhandis', 'Инженер', 3),
+          pos('Texnik xizmat ustasi', 'Мастер техобслуживания', 4),
+        ],
+      },
+      {
+        nameUz: "Savdo va ofis bo'limi",
+        nameRu: 'Продажи и офис',
+        order: 6,
+        positions: [
+          pos('Sotuv menejeri', 'Менеджер по продажам', 1),
+          pos('Marketing mutaxassisi', 'Маркетолог', 2),
+          pos('Operator (ofis)', 'Оператор (офис)', 3),
         ],
       },
     ],
